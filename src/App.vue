@@ -1,7 +1,32 @@
 <script setup>
 import { ref } from "vue";
 
-let showModal = ref(false);
+let showModal = ref(false)
+let newNote = ref("")
+const errorMessage = ref("")
+let notes = ref([]);
+
+function getColor(){
+    return "hsl(" + 360 * Math.random() + ',' +
+        (25 + 70 * Math.random()) + '%,' +
+        (85 + 10 * Math.random()) + '%)'
+}
+
+const addNote = ()=> {
+    if (newNote.value.trim().length <= 9) {
+        errorMessage.value = "Must be 10 characters or more"
+        return
+    }
+    notes.value.push({
+        id: Math.floor(Math.random() * 1000000),
+        text:newNote.value,
+        date: new Date(),
+        backgroundColor:getColor()
+    })
+    showModal.value = false;
+    newNote.value = "";
+    errorMessage.value = "";
+}
 
 </script>
 
@@ -9,9 +34,10 @@ let showModal = ref(false);
     <main>
         <div v-if="showModal" class="overlay">
             <div class="modal">
-                <textarea name="note" id="note" cols="30" rows="10">
+                <textarea v-model.trim="newNote" name="note" id="note" cols="30" rows="10">
                 </textarea>
-                <button>Add Note</button>
+                <p v-if="errorMessage"> {{errorMessage}} </p>
+                <button @click="addNote">Add Note</button>
                 <button @click="showModal = false" class="close">Close</button>
             </div>
         </div>
@@ -21,17 +47,9 @@ let showModal = ref(false);
                 <button @click="showModal = true">+</button>
             </header>
             <div class="cards-container">
-                <div class="card">
-                    <p class="main-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi dolorum et
-                        inventore nisi, omnis porro rem similique veniam? A aliquid aperiam aut dolorum expedita,
-                        incidunt iste mollitia non nostrum numquam?</p>
-                    <p class="date">02/05/2023</p>
-                </div>
-                <div class="card">
-                    <p class="main-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi dolorum et
-                        inventore nisi, omnis porro rem similique veniam? A aliquid aperiam aut dolorum expedita,
-                        incidunt iste mollitia non nostrum numquam?</p>
-                    <p class="date">02/05/2023</p>
+                <div v-for="note in notes" :key="note.id" class="card" :style="{backgroundColor:note.backgroundColor}">
+                    <p class="main-text">{{ note.text }}</p>
+                    <p class="date">{{ note.date.toLocaleDateString() }}</p>
                 </div>
             </div>
 
@@ -134,6 +152,10 @@ header button {
 .modal .close {
     background-color: rgb(193, 15, 15);
     margin-top: 7px;
+}
+
+.modal p {
+    color: red;
 }
 
 </style>
