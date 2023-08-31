@@ -1,52 +1,46 @@
 <script setup>
 import q from "./data/quizes.json"
 import { ref, watch } from "vue";
+import Card from "@/components/Card.vue";
 
 const quizzes = ref(q);
 const search = ref("");
 
-watch(search, () => {
-    quizzes.value = q.filter(quiz => quiz.name.toLowerCase().includes(search.value.toLowerCase()))
+watch(search, ()=> {
+    quizzes.value = q.filter((item)=> item.name.toLowerCase().includes(search.value.toLowerCase()))
 })
+
 </script>
 
 <template>
     <div class="container">
         <header>
             <h1>Quizzes</h1>
-            <input v-model.trim="search" type="text" placeholder="Search...">
+            <input v-model.trim="search" type="text" name="" id="" placeholder="Search...">
         </header>
         <div class="options-container">
-            <div v-for="quiz in quizzes" :key="quiz.id">
-                <div class="card">
-                    <img
-                        :src="quiz.img"
-                        alt="">
-                    <div class="card-text">
-                        <h2>{{ quiz.name }}</h2>
-                        <p>{{ quiz.questions.length }} questions</p>
-                    </div>
-                </div>
-            </div>
+            <Card v-for="quiz in quizzes" :key="quiz.id" :quiz="quiz"/>
         </div>
     </div>
 </template>
 
 <style scoped>
 .container {
+    /* Limit container to not stretch all the way to the sides of viewport */
     max-width: 1000px;
+    /*center*/
     margin: 0 auto;
 }
 
 header {
     margin-bottom: 10px;
-    margin-top: 10px;
+    margin-top: 30px;
     display: flex;
     align-items: center;
 }
 
 header h1 {
-    font-weight: bold;
+    font-weight: 600;
     margin-right: 30px;
 }
 
@@ -63,28 +57,6 @@ header input {
     margin-top: 40px;
 }
 
-/*CARD*/
-.card {
-    width: 310px;
-    overflow: hidden;
-    border-radius: 2%;
-    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 35px;
-    margin-right: 20px;
-    cursor: pointer;
-}
 
-.card img {
-    width: 100%;
-    height: 190px;
-    margin: 0;
-}
 
-.card .card-text {
-    padding: 0 5px;
-}
-
-.card .card-text h2 {
-    font-weight: 500;
-}
 </style>
